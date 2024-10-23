@@ -223,3 +223,55 @@ INSERT INTO Project (Name) VALUES
 ('Mobile Application Development'),
 ('Financial Reporting System'),
 ('Client Feedback System');
+
+CREATE TABLE Department (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Employee (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(255) NOT NULL,
+    LastName NVARCHAR(255) NOT NULL,
+    DateOfBirth DATE,
+    JoiningDate DATE,
+    Address NVARCHAR(MAX),
+    State NVARCHAR(255) NOT NULL,
+    DepartmentId INT NOT NULL,
+    TeamId INT NOT NULL,
+    IsInsured BIT,
+    Gender NVARCHAR(50) NOT NULL,
+    FOREIGN KEY (DepartmentId) REFERENCES Department(Id),
+    FOREIGN KEY (TeamId) REFERENCES Team(Id)
+);
+
+CREATE TABLE EmployeeProject (
+    EmployeeId INT NOT NULL,
+    ProjectId INT NOT NULL,
+    PRIMARY KEY (EmployeeId, ProjectId),
+    FOREIGN KEY (EmployeeId) REFERENCES Employee(Id),
+    FOREIGN KEY (ProjectId) REFERENCES Project(Id)
+);
+
+CREATE TABLE EmployeeSkill (
+    EmployeeId INT NOT NULL,
+    SkillId INT NOT NULL,
+    PRIMARY KEY (EmployeeId, SkillId),
+    FOREIGN KEY (EmployeeId) REFERENCES Employee(Id),
+    FOREIGN KEY (SkillId) REFERENCES Skill(Id)
+);
+
+CREATE TABLE Project (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Skill (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Team (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL
+);
