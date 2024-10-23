@@ -1,0 +1,241 @@
+﻿@model Office.ViewModels.EmployeeFormViewModel
+
+<h2>EmployeeForm</h2>
+
+<form id="myForm">
+    <div class="row mb-4">
+        <div class="col-md-2">
+            @Html.LabelFor(m => m.Employee.FirstName, "First Name", new { @class = "form-label" })
+        </div>
+        <div class="col-md-4">
+            <input type="text" id="FirstName" name="Employee.FirstName" class="form-control" value="@Model.Employee.FirstName" />
+        </div>
+        <div class="col-md-2">
+            @Html.LabelFor(m => m.Employee.LastName, "Last Name", new { @class = "form-label" })
+        </div>
+        <div class="col-md-4">
+            <input type="text" id="LastName" name="Employee.LastName" class="form-control" value="@Model.Employee.LastName" />
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            @Html.LabelFor(m => m.Employee.DepartmentId, "Department", new { @class = "form-label" })
+        </div>
+        <div class="col-md-4">
+            <select id="DepartmentId" name="Employee.DepartmentId" class="form-select">
+                <option value="">Select Department</option>
+                @foreach (var department in Model.Departments)
+                {
+                    <option value="@department.Id" @(Model.Employee.DepartmentId == department.Id ? "selected" : "")>@department.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            @Html.LabelFor(m => m.Employee.TeamId, "Team", new { @class = "form-label" })
+        </div>
+        <div class="col-md-4">
+            <select id="TeamId" name="Employee.TeamId" class="form-select">
+                <option value="">Select Team</option>
+                @foreach (var team in Model.Teams)
+                {
+                    <option value="@team.Id" @(Model.Employee.TeamId == team.Id ? "selected" : "")>@team.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            @Html.LabelFor(m => m.Employee.Gender, "Gender", new { @class = "form-label" })
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="GenderM" name="Employee.Gender" value="Male" @(Model.Employee.Gender == "Male" ? "checked" : "")>
+                <label class="form-check-label" for="Male">Male</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="GenderF" name="Employee.Gender" value="FeMale" @(Model.Employee.Gender == "FeMale" ? "checked" : "")>
+                <label class="form-check-label" for="FeMale">FeMale</label>
+
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            @Html.LabelFor(m => m.Employee.IsInsured, "Is Insured", new { @class = "form-label" })
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="IsInsuredTrue" name="Employee.IsInsured" value="true" @(Model.Employee.IsInsured == true ? "checked" : "")>
+                <label class="form-check-label" for="IsInsuredTrue">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="IsInsuredFalse" name="Employee.IsInsured" value="false" class="form-check-input" @(Model.Employee.IsInsured == false ? "checked" : "")>
+                <label for="IsInsuredFalse" class="form-check-label">No</label>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            @Html.LabelFor(m => m.Employee.DateOfBirth, "Date of Birth", new { @class = "form-label" })
+        </div>
+        <div class="col-md-4">
+            <input type="date" id="DateOfBirth" data-date-format="dd-MM-yyyy" name="Employee.DateOfBirth" class="form-control" value="@Model.Employee.DateOfBirth.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="col-md-2">
+            @Html.LabelFor(m => m.Employee.JoiningDate, "Joining Date", new { @class = "form-label" })
+        </div>
+        <div class="col-md-4">
+            <input type="date" id="JoiningDate" data-date-format="dd-MM-yyyy" name="Employee.JoiningDate" class="form-control" value="@Model.Employee.JoiningDate.ToString("yyyy-MM-dd")" />
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <label class="form-label">Skills</label>
+        </div>
+        <div class="col-md-2">
+            @foreach (var skill in Model.Skills)
+            {
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="SelectedSkills" value="@skill.Id" @(Model.SelectedSkills != null && Model.SelectedSkills.Contains(skill.Id) ? "checked" : "")>
+                    <label class="form-check-label">@skill.Name</label>
+                </div>
+            }
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-1"></div>
+        <div class="col-md-2">
+            <label class="form-label">Projects</label>
+        </div>
+        <div class="col-md-2">
+            @foreach (var project in Model.Projects)
+            {
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="SelectedProjects" value="@project.Id" @(Model.SelectedProjects != null && Model.SelectedProjects.Contains(project.Id) ? "checked" : "")>
+                    <label class="form-check-label">@project.Name</label>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            @Html.LabelFor(m => m.Employee.Address, "Address", new { @class = "form-label" })
+        </div>
+        <div class="col-md-4">
+            @Html.TextAreaFor(m => m.Employee.Address, new { @class = "form-control", @id = "Employee_Address" })
+        </div>
+        <div class="col-md-2">
+            @Html.LabelFor(m => m.Employee.State, "State", new { @class = "form-label" })
+        </div>
+        <div class="col-md-4">
+            @Html.TextAreaFor(m => m.Employee.State, new { @class = "form-control", @id = "Employee_State" })
+        </div>
+    </div>
+
+    <input type="hidden" id="EmployeeId" name="Employee.Id" value="@Model.Employee.Id" />
+
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
+        </div>
+        <div class="col-md-2">
+            @Html.ActionLink("Cancel", "Index", "Employee", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+        $('#myForm').submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
+            var firstName = $('#FirstName').val();
+            var lastName = $('#LastName').val();
+            var state = $('#Employee_State').val();
+            var team = $('#TeamId').val();
+            var genderM = $('#GenderM').is(':checked');
+            var genderF = $('#GenderF').is(':checked');
+            var address = $('#Employee_Address').val();
+            var departmentId = $('#DepartmentId').val();
+
+            var missingFields = [];
+
+            if (departmentId === '') {
+                missingFields.push('Department');
+            }
+            if (firstName === '') {
+                missingFields.push('First Name');
+            }
+            if (lastName === '') {
+                missingFields.push('Last Name');
+            }
+            if (state === '') {
+                missingFields.push('State');
+            }
+            if (team === '') {
+                missingFields.push('Team');
+            }
+            if (!genderM && !genderF) {
+                missingFields.push('Gender');
+            }
+            if (address === '') {
+                missingFields.push('Address');
+            }
+
+            if (missingFields.length > 0) {
+                var missingFieldsText = missingFields.join(', ');
+                showToast('Please fill in all fields: ' + missingFieldsText, 'warning');
+                return;
+            }
+
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Save","Employee")',
+                data: formData,
+                success: function (response) {
+                    showToast('Form submitted successfully.', 'success');
+                    debugger
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                },
+                error: function (xhr, status, error) {
+                    showToast('An error occurred while submitting the form.', 'danger');
+                }
+            });
+        });
+
+    });
+
+    function showToast(message, type) {
+        var toast = $(
+            '<div class="toast align-items-center text-white bg-' + type + ' border-0" role="alert" aria-live="assertive" aria-atomic="true">\
+                              <div class="d-flex">\
+                                <div class="toast-body">\
+                                  ' + message + '\
+                                </div>\
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>\
+                              </div>\
+                            </div>'
+        );
+
+        $('.toast-container').append(toast);
+        var toastElement = toast[0];
+        var toastInstance = new bootstrap.Toast(toastElement);
+        toastInstance.show();
+    }
+</script>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+</div>

@@ -1,0 +1,123 @@
+﻿@model Office.ViewModels.EmployeeFormViewModel
+@{
+    ViewBag.Title = "Office";
+}
+
+<p>
+    <button id="New" class="btn btn-secondary" onclick="loadFormPartialView(@Model.Employee.Id)">New Employee</button>
+    <button id="Edit" class="btn btn-secondary" onclick="editSelected()">Edit</button>
+    <button id="Delete" class="btn btn-danger" onclick="deleteSelected()">Delete</button>
+</p>
+<div id="EmpList" style="display:block;">
+
+</div>
+
+<div id="EmpForm" style="display:none">
+</div>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+
+    var jq = jQuery.noConflict();
+
+    jq(document).ready(function () {
+        loadListPartialView();
+    });
+
+    function loadFormPartialView(employeeId) {
+      $.ajax({
+        url: '@Url.Action("Form", "Employee")',
+        type: 'POST',
+        data: { id: employeeId },
+        success: function (response) {
+            $('#EmpForm').html(response);
+            $('#EmpForm').show();
+            $('#EmpList').hide();
+            $('#Delete').hide();
+            $('#Edit').hide();
+            $('#New').hide();
+        },
+        error: function(xhr, status, error) {
+            console.log(error);
+        }
+    });
+}
+
+    function editSelected() {
+        var selectedEmployees = $('.selectEmployee:checked');
+        if (selectedEmployees.length === 1) {
+            var id = selectedEmployees.val();
+            loadFormPartialView(id);
+        } else if (selectedEmployees.length === 0) {
+            alert('Please select an employee to edit.');
+        } else {
+            alert('Please select only one employee to edit.');
+        }
+    }
+
+    function deleteSelected() {
+        var selectedEmployees = $('.selectEmployee:checked');
+        if (selectedEmployees.length > 0) {
+            var ids = selectedEmployees.map(function () {
+                return $(this).val();
+            }).get();
+            if (confirm('Are you sure you want to delete the selected employees?')) {
+                var idString = ids.join(',');
+                $.ajax({
+                    url: '@Url.Action("DeleteEmployee", "Employee")',
+                    type: 'POST',
+                    data: { ids: idString },
+                    success: function (response) {
+                        showToast('Deleted successfully.', 'warning');
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1500);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            }
+        } else {
+            alert('Please select at least one employee to delete.');
+        }
+    }
+
+    function loadListPartialView() {
+            jq.ajax({
+                url: '@Url.Action("List", "Employee")',
+                type: 'POST',
+                success: function(response) {
+                    jq('#EmpList').html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+    }
+
+    function showToast(message, type) {
+        var toast =
+            $(
+            '<div class="toast align-items-center text-white bg-' + type + ' border-0" role="alert" aria-live="assertive" aria-atomic="true">\
+                      <div class="d-flex">\
+                        <div class="toast-body">\
+                          ' + message + '\
+                        </div>\
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>\
+                      </div>\
+                    </div>'
+             );
+
+        $('.toast-container').append(toast);
+        var toastElement = toast[0];
+        var toastInstance = new bootstrap.Toast(toastElement);
+        toastInstance.show();
+    }
+</script>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+</div>

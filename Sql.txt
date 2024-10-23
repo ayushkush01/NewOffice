@@ -1,0 +1,187 @@
+
+Create PROCEDURE [dbo].[InserOrUpdateEmployeeWithProjectsAndSkills]
+    @EmployeeId INT,
+    @FirstName NVARCHAR(255),
+    @LastName NVARCHAR(255),
+    @Address NVARCHAR(MAX),
+    @State NVARCHAR(100),
+    @DepartmentId INT,
+    @TeamId INT,
+    @IsInsured BIT,
+    @Gender NVARCHAR(10),
+    @ProjectIds NVARCHAR(MAX),
+    @SkillIds NVARCHAR(MAX),
+    @DateOfBirth DATETIME,
+    @JoiningDate DATETIME
+AS
+BEGIN
+    IF @EmployeeId = 0 
+    BEGIN
+        INSERT INTO Employee (FirstName, LastName, Address, State, DepartmentId, TeamId, IsInsured, Gender, DateOfBirth, JoiningDate)
+        VALUES (@FirstName, @LastName, @Address, @State, @DepartmentId, @TeamId, @IsInsured, @Gender, @DateOfBirth, @JoiningDate);
+        SET @EmployeeId = SCOPE_IDENTITY();
+
+        IF @ProjectIds IS NOT NULL AND LEN(@ProjectIds) > 0
+        BEGIN
+            INSERT INTO EmployeeProject (ProjectId, EmployeeId)
+            SELECT value, @EmployeeId FROM STRING_SPLIT(@ProjectIds, ',');
+        END;
+
+        IF @SkillIds IS NOT NULL AND LEN(@SkillIds) > 0
+        BEGIN
+            INSERT INTO EmployeeSkill (SkillId, EmployeeId)
+            SELECT value, @EmployeeId FROM STRING_SPLIT(@SkillIds, ',');
+        END;
+    END
+    ELSE 
+    BEGIN
+        UPDATE Employee
+        SET 
+            FirstName = @FirstName,
+            LastName = @LastName,
+            Address = @Address,
+            State = @State,
+            DepartmentId = @DepartmentId,
+            TeamId = @TeamId,
+            IsInsured = @IsInsured,
+            Gender = @Gender,
+            DateOfBirth = @DateOfBirth,
+            JoiningDate = @JoiningDate
+        WHERE Id = @EmployeeId;
+
+        
+        DELETE FROM EmployeeSkill WHERE EmployeeId = @EmployeeId;
+        DELETE FROM EmployeeProject WHERE EmployeeId = @EmployeeId;
+        
+        IF @SkillIds IS NOT NULL AND LEN(@SkillIds) > 0
+        BEGIN
+            INSERT INTO EmployeeSkill (EmployeeId, SkillId)
+            SELECT @EmployeeId, value FROM STRING_SPLIT(@SkillIds, ',');
+        END;
+
+        IF @ProjectIds IS NOT NULL AND LEN(@ProjectIds) > 0
+        BEGIN
+            INSERT INTO EmployeeProject (EmployeeId, ProjectId)
+            SELECT @EmployeeId, value FROM STRING_SPLIT(@ProjectIds, ',');
+        END;
+    END;
+END;
+
+
+Create PROCEDURE [dbo].[DeleteEmployee]
+    @EmployeeId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Delete related records in EmployeeSkill table
+    DELETE FROM EmployeeSkill WHERE EmployeeId = @EmployeeId;
+
+    -- Delete related records in EmployeeProject table
+    DELETE FROM EmployeeProject WHERE EmployeeId = @EmployeeId;
+
+    -- Delete employee
+    DELETE FROM Employee WHERE Id = @EmployeeId;
+END;
+
+
+Create PROCEDURE [dbo].[GetEmployeeData]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        e.Id,
+        e.FirstName,
+        e.LastName,
+        e.DepartmentId,
+        e.TeamId,
+        e.Address,
+        e.State,
+        e.IsInsured,
+        e.Gender,
+		e.DateOfBirth,
+		e.JoiningDate,
+        d.Name AS DepartmentName,
+        t.Name AS TeamName,
+        STRING_AGG(CAST(sc.ProjectId AS NVARCHAR(10)), ',') AS ProjectIds,
+        STRING_AGG(CAST(si.SkillId AS NVARCHAR(10)), ',') AS SkillIds
+    FROM 
+        Employee e
+    INNER JOIN 
+        Department d ON e.DepartmentId = d.Id
+    INNER JOIN 
+        Team t ON e.TeamId = t.Id
+    LEFT JOIN
+        EmployeeProject sc ON e.Id = sc.EmployeeId 
+    LEFT JOIN
+        EmployeeSkill si ON e.Id = si.EmployeeId
+    GROUP BY
+        e.Id,
+        e.FirstName,
+        e.LastName,
+        e.DepartmentId,
+        e.TeamId,
+        e.Address,
+        e.State,
+        e.IsInsured,
+        e.Gender,
+		e.DateOfBirth,
+		e.JoiningDate,
+        d.Name,
+        t.Name;
+END;
+
+
+Create PROCEDURE [dbo].[GetEmployeeProject]
+AS
+BEGIN
+    SELECT 
+	Ep.EmployeeId As EmployeeId,
+	Ep.ProjectId As ProjectId,
+	p.Name as ProjectName,
+	E.FirstName +' '+E.LastName as EmployeeName
+	FROM EmployeeProject Ep
+	join Project p on Ep.ProjectId  = p.Id 
+	join Employee E on Ep.EmployeeId = E.Id
+	
+END;
+
+
+Create PROCEDURE [dbo].[GetEmployeeSkill]
+AS
+BEGIN
+    SELECT 
+	Es.EmployeeId As EmployeeId,
+	Es.SkillId As SkillId,
+	S.Name as SkillName,
+	E.FirstName +' '+E.LastName as EmployeeName
+	FROM EmployeeSkill Es
+	join Skill S on Es.SkillId  = S.Id 
+	join Employee E on Es.EmployeeId = E.Id
+	
+END;
+
+Create PROCEDURE [dbo].[GetTeams]
+AS
+BEGIN
+    SELECT * FROM Team
+END;
+
+Create PROCEDURE [dbo].[GetSkills]
+AS
+BEGIN
+    SELECT * FROM Skill
+END;
+
+Create PROCEDURE [dbo].[GetProjects]
+AS
+BEGIN
+    SELECT * FROM Project
+END;
+
+Create PROCEDURE [dbo].[GetDepartments]
+AS
+BEGIN
+    SELECT * FROM Department
+END;

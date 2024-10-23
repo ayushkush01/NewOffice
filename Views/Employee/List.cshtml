@@ -1,0 +1,45 @@
+﻿@model List<Office.Models.Employee>
+
+<h2>Employees</h2>
+
+<div class="table-responsive">
+    <table id="employees" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th class="myth">Select</th>
+                <th class="myth">Id</th>
+                <th class="myth">Name</th>
+                <th class="myth">Gender</th>
+                <th class="myth">DateOfBirth</th>
+                <th class="myth">Joining</th>
+                <th class="myth">Department</th>
+                <th class="myth">Team</th>
+                <th class="myth">Projects</th>
+                <th class="myth">Skills</th>
+                <th class="myth">Is Insured</th>
+                <th class="myth">State</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var employee in Model)
+            {
+                <tr>
+                    <td><input type="checkbox" class="selectEmployee" value="@employee.Id"></td>
+                    <td>@employee.Id</td>
+                    <td>@(employee.FirstName + " " + employee.LastName)</td>
+                    <td>@employee.Gender</td>
+                    <td>@employee.DateOfBirth.Date.ToString("MM-dd-yyyy")</td>
+                    <td>@employee.JoiningDate.Date.ToString("MM-dd-yyyy")</td>
+                    <td>@employee.Department.Name</td>
+                    <td>@employee.Team.Name</td>
+                    <td>@string.Join(", ", employee.Projects.Select(c => c.Name))</td>
+                    <td>@string.Join(", ", employee.Skills.Select(c => c.Name))</td>
+                    <td><input type="checkbox" disabled @(employee.IsInsured ? "checked" : "") /></td>
+                    <td>@employee.State</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
