@@ -185,3 +185,41 @@ AS
 BEGIN
     SELECT * FROM Department
 END;
+
+INSERT INTO Department (Name) VALUES 
+('Human Resources'),
+('Finance'),
+('Engineering'),
+('Marketing'),
+('Sales');
+
+INSERT INTO Team (Name) VALUES 
+('Product Development'),
+('Operations'),
+('Customer Support'),
+('Research and Development'),
+('Sales Team A');
+
+INSERT INTO Skill (Name) VALUES 
+('C# Programming'),
+('Project Management'),
+('Data Analysis'),
+('Salesforce CRM'),
+('Digital Marketing'),
+('UI/UX Design'),
+('Machine Learning'),
+('SQL'),
+('JavaScript'),
+('Cloud Computing');
+
+INSERT INTO Project (Name) VALUES 
+('Employee Management System'),
+('Customer Relationship Portal'),
+('Sales Dashboard'),
+('Marketing Automation Tool'),
+('AI-based Recommendation Engine'),
+('Data Warehouse Migration'),
+('Website Redesign'),
+('Mobile Application Development'),
+('Financial Reporting System'),
+('Client Feedback System');
